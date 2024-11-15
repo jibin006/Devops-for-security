@@ -1,6 +1,6 @@
 **Load Balancer Security with IAM and Firewall Policies**
 
-(Config is attached in files)
+(Config is attached in files as Load_terraform.tf)
 
 This lab focused on setting up a secure HTTP Load Balancer in GCP using Terraform. It included creating backend resources, configuring IAM policies for access control, and setting up firewall rules to restrict traffic to specific IP ranges. Below is a detailed summary of the steps, issues encountered, and solutions applied.
 
