@@ -2,6 +2,7 @@
 
 # Define the provider
 provider "google" {
+  credentials = file("<path_to_your_service_account_key>.json")
   project = "<airy-adapter-439306-c6>"
   region  = "us-central1"
 }
