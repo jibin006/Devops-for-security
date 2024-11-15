@@ -1,0 +1,182 @@
+**Day 24 Lab Summary: Load Balancer Security with IAM and Firewall Policies**
+
+(Config is attached in files)
+
+This lab focused on setting up a secure HTTP Load Balancer in GCP using Terraform. It included creating backend resources, configuring IAM policies for access control, and setting up firewall rules to restrict traffic to specific IP ranges. Below is a detailed summary of the steps, issues encountered, and solutions applied.
+
+---
+
+### **Objective**
+1. Set up an HTTP Load Balancer with a managed instance group as the backend.
+2. Secure the load balancer using IAM roles and firewall rules.
+3. Resolve configuration errors and ensure the successful deployment of resources.
+
+---
+
+### **Lab Steps**
+
+#### **1. Terraform Configuration**
+- **Provider Setup**:
+  Configured the `google` provider block with explicit credentials to authenticate with GCP.
+  ```hcl
+  provider "google" {
+    credentials = file("C:\\Users\\jilub\\Downloads\\terraform-lab-441807-f2b04f4cb5e0.json")
+    project     = "terraform-lab-441807"
+    region      = "us-central1"
+  }
+  ```
+
+- **Resource Definitions**:
+  - **Instance Template**: Configured an instance template using `google_compute_instance_template`. Replaced the incorrect `initialize` block with the valid `source_image` attribute.
+  - **Managed Instance Group**: Defined a zonal instance group and attached the instance template.
+  - **Health Check**: Created an HTTP health check for backend instance monitoring.
+  - **Backend Service**: Linked the instance group to a backend service and added the health check for monitoring.
+  - **Load Balancer Components**: Configured a URL map, HTTP proxy, global forwarding rule, and reserved a global IP address.
+  - **Firewall Rules**: Added rules to restrict traffic to Google Cloud load balancer IP ranges.
+
+#### **2. Commands Executed**
+- **Initialize Terraform**:
+  Initialized the Terraform environment to download the required providers.
+  ```bash
+  terraform init
+  ```
+
+- **Plan and Apply**:
+  Reviewed and applied the configuration.
+  ```bash
+  terraform plan
+  terraform apply
+  ```
+
+---
+
+### **Issues Faced and Solutions**
+
+#### **Issue 1: Unsupported Block Type (`initialize` in Instance Template)**
+- **Error**:
+  ```plaintext
+  Error: Unsupported block type
+  ```
+  - The `initialize` block in `google_compute_instance_template` was invalid.
+- **Solution**:
+  Replaced the `initialize` block with the correct `source_image` attribute:
+  ```hcl
+  disk {
+    auto_delete  = true
+    boot         = true
+    source_image = "debian-cloud/debian-12"
+  }
+  ```
+
+---
+
+#### **Issue 2: Race Condition with Health Check**
+- **Error**:
+  ```plaintext
+  Error creating BackendService: The resource 'projects/terraform-lab-441807/global/healthChecks/example-health-check' is not ready.
+  ```
+- **Cause**:
+  The backend service tried to reference the health check before it was fully created.
+- **Solution**:
+  Added a `depends_on` block to ensure the health check was created before the backend service:
+  ```hcl
+  depends_on = [
+    google_compute_health_check.example_health_check
+  ]
+  ```
+
+---
+
+#### **Issue 3: Missing `google_compute_network` for Firewall Rule**
+- **Error**:
+  ```plaintext
+  Error: Reference to undeclared resource
+  ```
+- **Cause**:
+  The `google_compute_firewall` resource referenced a `google_compute_network` that was not defined.
+- **Solution**:
+  Added a custom VPC network:
+  ```hcl
+  resource "google_compute_network" "custom_vpc" {
+    name                    = "custom-vpc"
+    auto_create_subnetworks = false
+  }
+  ```
+
+---
+
+#### **Issue 4: Cloud Resource Manager API Disabled**
+- **Error**:
+  ```plaintext
+  Cloud Resource Manager API has not been used in project...
+  ```
+- **Solution**:
+  Enabled the **Cloud Resource Manager API** for the project:
+  - Navigated to [API Library](https://console.cloud.google.com/apis/library).
+  - Searched for "Cloud Resource Manager API" and enabled it.
+
+---
+
+#### **Issue 5: Incorrect IAM Role Assignment for Load Balancer Admin**
+- **Error**:
+  ```plaintext
+  Error 400: Principal terraform@terraform-lab-441807.iam.gserviceaccount.com is of type "serviceAccount".
+  ```
+- **Cause**:
+  Incorrect member format for the service account.
+- **Solution**:
+  Updated the `google_project_iam_member` resource with the correct `serviceAccount:` prefix:
+  ```hcl
+  member = "serviceAccount:terraform@terraform-lab-441807.iam.gserviceaccount.com"
+  ```
+
+---
+
+#### **Issue 6: Permission Denied for Updating IAM Policy**
+- **Error**:
+  ```plaintext
+  Error 403: Policy update access denied.
+  ```
+- **Cause**:
+  The service account lacked permissions to modify IAM policies.
+- **Solution**:
+  - Verified that the service account had the **Project Editor** or **Owner** role.
+  - Granted the necessary roles via the Google Cloud Console.
+
+---
+
+### **Firewall Rule for Load Balancer Security**
+
+Created a firewall rule to allow traffic only from Google Cloud load balancer IP ranges:
+```hcl
+resource "google_compute_firewall" "allow_lb_traffic" {
+  name    = "allow-lb-traffic"
+  network = google_compute_network.custom_vpc.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80"]
+  }
+
+  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]  # GCP Load Balancer IP ranges
+  target_tags   = ["web-server"]
+}
+```
+
+---
+
+### **Verification and Testing**
+1. Verified that the load balancer distributed traffic evenly across backend instances.
+2. Confirmed that the IAM policies restricted access to load balancer management.
+3. Tested firewall rules to ensure only traffic from allowed IP ranges reached backend instances.
+4. Monitored backend service health in the GCP Console to confirm the health check was functional.
+
+---
+
+### **Key Takeaways**
+- Always validate resource dependencies using `depends_on` to avoid race conditions.
+- Ensure all required APIs are enabled in GCP before applying Terraform configurations.
+- Properly format IAM members (e.g., `serviceAccount:`) to avoid errors.
+- Use firewall rules to restrict traffic to backend instances for enhanced security.
+
+This lab reinforced the importance of configuring secure and scalable load balancers in GCP while addressing real-world configuration challenges.
