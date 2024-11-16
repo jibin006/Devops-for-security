@@ -34,12 +34,8 @@ I am using a free version of a GCP account, which limits access to a full-fledge
 
 ## Step-by-Step Implementation
 
- $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Users\jilub\Downloads\terrform-project-441806-47c69f6c9793.json" for  powwershell
-cd gcp-network-automation
+ $env:GOOGLE_APPLICATION_CREDENTIALS=("<path_to_your_service_account_key>.json") for  powwershell
 
-# Configure gcloud
-gcloud auth application-default login
-```
 
 ### 2. Network Configuration
 1. Create the base VPC network
@@ -82,33 +78,26 @@ gcloud auth application-default login
 
 ### 5. Automation with Terraform
 1. Initialize Terraform
-```bash
+
 terraform init
-```
 
-2. Configure Variables
-```bash
-# Create terraform.tfvars
-project_id = "your-project-id"
-region     = "us-central1"
-```
 
-3. Deploy Infrastructure
-```bash
+2. Deploy Infrastructure
+
 terraform plan
 terraform apply
 ```
 
 ## Testing and Validation
 1. Verify Network Connectivity
-```bash
+
 # Test internal connectivity
 gcloud compute networks subnets list
 gcloud compute routers get-status
 
 # Verify Cloud Interconnect
 gcloud compute interconnects attachments describe
-```
+
 
 2. Test Security Controls
 - Verify Cloud Armor rules
@@ -121,12 +110,12 @@ gcloud compute interconnects attachments describe
 - Test frontend IP accessibility
 
 ## Clean Up
-```bash
+
 terraform destroy
-```
+
 
 ## Common Issues and Troubleshooting
-1. Interconnect Issues
+1. Interconnect Issues (no dedicared or partner link for me)
    - Check BGP session status
    - Verify route advertisements
    - Validate VLAN attachment
@@ -146,11 +135,7 @@ terraform destroy
 - [Cloud Armor Documentation](https://cloud.google.com/armor/docs)
 - [Terraform GCP Provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs)
 
-## Next Steps
-- Implement monitoring and alerting
-- Add disaster recovery configurations
-- Set up CI/CD pipeline for infrastructure
-- Implement cost optimization strategies
+
 
 ## Tags
 #GCP #Networking #Security #CloudArmor #Terraform #Infrastructure #DevOps #Hybrid
