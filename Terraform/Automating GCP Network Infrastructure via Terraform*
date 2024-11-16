@@ -22,10 +22,9 @@ In this lab, I set up network infrastructure on Google Cloud Platform (GCP) usin
 1. **Download Terraform** from the official Terraform [downloads page](https://www.terraform.io/downloads.html) based on your OS.
 2. **Install Terraform:**
    - **Windows:** Extract the zip file, and add the path of Terraform executable to the system's environment variables.
-   - **macOS:** Use `brew install terraform` if you have Homebrew installed.
-   - **Linux:** Extract the zip file and move the Terraform binary to `/usr/local/bin`.
+
 3. **Verify Installation:**
-   ```bash
+  
    terraform -v
    ```
    You should see the installed Terraform version if it’s correctly set up.
@@ -37,14 +36,14 @@ In this lab, I set up network infrastructure on Google Cloud Platform (GCP) usin
 To allow Terraform to interact with GCP, we need to authenticate using a service account key JSON file.
 
 1. **Export GCP Credentials Environment Variable:**
-   ```bash
+  
    export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your-service-account-key.json"
    ```
    Replace `/path/to/your-service-account-key.json` with the actual path to your service account key JSON file. This variable allows Terraform to authenticate using the service account.
    **To stay on the safe side, I’m only providing the syntax without including any specific details. Always remember to keep the service account key private and never share it publicly.**
      
 
-2. **Addressing Authentication Issues**: During this setup, you may encounter an **authentication or permissions error (403: Permission Denied)**, which could occur if the service account does not have the necessary permissions on GCP.
+2. **Addressing Authentication Issues**: During this setup, i encounter an **authentication or permissions error (403: Permission Denied)**, which could occur if the service account does not have the necessary permissions on GCP.
    - Ensure the service account has the required IAM roles, especially `Compute Network Admin` for network management.
    - If the issue persists, explicitly specify the credentials in the Terraform configuration file (covered in Step 3).
 
@@ -52,9 +51,9 @@ To allow Terraform to interact with GCP, we need to authenticate using a service
 
 ### **Step 3: Create a Terraform Configuration File (main.tf)**
 
-1. In your project folder, create a new file named `main.tf`.
+1. In project folder, create a new file named `main.tf`.
 
-2. Write the following Terraform configuration in `main.tf`, including the credentials for authentication: (Attached as main.tf )
+2. Write the following Terraform configuration in `main.tf`, including the credentials for authentication: (Attached as configfile+GCP automate.tf )
 
   
    # Provider configuration for GCP
@@ -106,7 +105,7 @@ To allow Terraform to interact with GCP, we need to authenticate using a service
 
 Initialize the project to download the necessary plugins and prepare for configuration.
 
-```bash
+
 terraform init
 ```
 
@@ -119,7 +118,7 @@ Expected output:
 
 Run `terraform plan` to see a preview of the actions Terraform will perform based on `main.tf`.
 
-```bash
+
 terraform plan
 ```
 
@@ -132,7 +131,7 @@ Expected output:
 
 Run `terraform apply` to apply the configuration and create the resources in GCP.
 
-```bash
+
 terraform apply
 ```
 
@@ -159,7 +158,7 @@ Each of these resources should match your Terraform configuration.
 
 After verifying, you may want to remove the resources to avoid costs.
 
-```bash
+
 terraform destroy
 ```
 
