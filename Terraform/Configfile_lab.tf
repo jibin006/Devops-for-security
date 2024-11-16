@@ -1,7 +1,7 @@
 Comprehensive lab that combines hybrid networking, security, and automation in GCP
 
 provider "google" {
-  credentials = file("C:\\Users\\jibinb\\Downloads\\terraform-lab-441807-f2b04f4cb5e0.json")
+  credentials = file("<path_to_your_service_account_key>.json")
   project     = "terraform-lab-441807"
   region      = "us-central1"
 }
