@@ -1,0 +1,156 @@
+Building a Complex GCP Hybrid Network with Security and Automation  (Config file saved as configfile_lab.tf)
+
+## Lab Overview
+In this lab, I'll build a production-grade hybrid network setup in Google Cloud Platform (GCP) that combines advanced networking features, security controls, and infrastructure automation using Terraform.
+I am using a free version of a GCP account, which limits access to a full-fledged setup similar to a production environment. I am currently trying to understand the concepts. 
+
+## Prerequisites
+- GCP Account 
+- Terraform installed (v1.0+)
+- gcloud CLI installed and configured
+- Basic understanding of networking concepts
+- Required GCP APIs enabled:
+  - Compute Engine API
+  - Cloud Armor API
+  - Cloud Interconnect API
+
+## Architecture Components
+1. Networking:
+   - Custom VPC network
+   - Two custom subnets
+   - Cloud Router for BGP routing
+   - Cloud Interconnect for hybrid connectivity
+   - Cloud NAT for internet access
+
+2. Security:
+   - Cloud Armor security policies
+   - Custom firewall rules
+   - Network segmentation
+
+3. Load Balancing:
+   - Global HTTP(S) Load Balancer
+   - Health checks
+   - Backend services
+
+## Step-by-Step Implementation
+
+ $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Users\jilub\Downloads\terrform-project-441806-47c69f6c9793.json" for  powwershell
+cd gcp-network-automation
+
+# Configure gcloud
+gcloud auth application-default login
+```
+
+### 2. Network Configuration
+1. Create the base VPC network
+   - Custom mode network
+   - Two subnets in different regions
+   - Configure IP ranges
+
+2. Set up Cloud Router
+   - Configure BGP ASN
+   - Define routes
+   - Enable dynamic routing
+
+3. Configure Cloud Interconnect
+   - Create VLAN attachment
+   - Set up BGP peering
+   - Configure route advertisements
+
+### 3. Security Implementation
+1. Configure Cloud Armor
+   - Create security policy
+   - Set up default deny rule
+   - Configure IP allowlists
+   - Implement rate limiting
+
+2. Set up Firewall Rules
+   - Allow internal communication
+   - Configure service-specific rules
+   - Set up logging
+
+### 4. Load Balancer Setup
+1. Create Global Load Balancer
+   - Configure frontend
+   - Set up backend services
+   - Implement health checks
+
+2. Integrate Security
+   - Attach Cloud Armor policy
+   - Configure SSL certificates
+   - Set up logging
+
+### 5. Automation with Terraform
+1. Initialize Terraform
+```bash
+terraform init
+```
+
+2. Configure Variables
+```bash
+# Create terraform.tfvars
+project_id = "your-project-id"
+region     = "us-central1"
+```
+
+3. Deploy Infrastructure
+```bash
+terraform plan
+terraform apply
+```
+
+## Testing and Validation
+1. Verify Network Connectivity
+```bash
+# Test internal connectivity
+gcloud compute networks subnets list
+gcloud compute routers get-status
+
+# Verify Cloud Interconnect
+gcloud compute interconnects attachments describe
+```
+
+2. Test Security Controls
+- Verify Cloud Armor rules
+- Test rate limiting
+- Validate firewall rules
+
+3. Load Balancer Testing
+- Check health check status
+- Verify backend services
+- Test frontend IP accessibility
+
+## Clean Up
+```bash
+terraform destroy
+```
+
+## Common Issues and Troubleshooting
+1. Interconnect Issues
+   - Check BGP session status
+   - Verify route advertisements
+   - Validate VLAN attachment
+
+2. Security Policy Problems
+   - Review Cloud Armor logs
+   - Check rule priorities
+   - Verify IP ranges
+
+3. Load Balancer Concerns
+   - Check backend health
+   - Verify SSL certificates
+   - Review access logs
+
+## Additional Resources
+- [GCP Interconnect Documentation](https://cloud.google.com/network-connectivity/docs/interconnect)
+- [Cloud Armor Documentation](https://cloud.google.com/armor/docs)
+- [Terraform GCP Provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs)
+
+## Next Steps
+- Implement monitoring and alerting
+- Add disaster recovery configurations
+- Set up CI/CD pipeline for infrastructure
+- Implement cost optimization strategies
+
+## Tags
+#GCP #Networking #Security #CloudArmor #Terraform #Infrastructure #DevOps #Hybrid
