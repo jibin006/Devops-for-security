@@ -1,6 +1,6 @@
 #Designed to manage Google Cloud Platform (GCP) firewall rules for HTTP traffic.
 
-- hosts: web_servers
+- hosts: web_servers     # like ansible control node capable of interacting with GCP through the gcp_compute_firewall module.
   gather_facts: yes                #Ansible collects system information (facts) about the target hosts
   vars:    #to avoid hardcoding values and make the playbook reusable
     gcp_project: terraform-lab-441807
