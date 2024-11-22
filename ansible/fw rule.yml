@@ -1,0 +1,1 @@
+Modify the playbook to include a task that configures a firewall rule to allow HTTP traffic (port 80). For example, on GCP, use the gcp_compute_firewall module.
