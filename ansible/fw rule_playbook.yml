@@ -1,0 +1,27 @@
+#Designed to manage Google Cloud Platform (GCP) firewall rules for HTTP traffic.
+
+- hosts: web_servers
+  gather_facts: yes                #Ansible collects system information (facts) about the target hosts
+  vars:    #to avoid hardcoding values and make the playbook reusable
+    gcp_project: your-project-id
+    gcp_zone: us-central1-a
+    gcp_region: us-central1
+    credentials_file: /path/to/gcp/credentials.json
+
+  tasks:
+    - name: Create GCP Firewall Rule for HTTP Traffic
+      gcp_compute_firewall:
+        name: allow-http-traffic
+        project: "{{ gcp_project }}"
+        network: 
+          selfLink: global/networks/default   #Specifies the network where the firewall rule will be applied
+        allowed:
+          - ip_protocol: tcp
+            ports: 
+              - "80"
+        source_ranges: 
+          - "0.0.0.0/0"
+        target_tags: 
+          - http-server
+        state: present    #Ensures the firewall rule is created and exists in the specified state.
+        credentials_file: "{{ credentials_file }}"
