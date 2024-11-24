@@ -129,4 +129,5 @@ ansible-playbook -i inventory.ini first-playbook.yml
 
 ---
 
-Feel free to customize the steps and settings to fit your use case. Happy learning with Ansible! 🎉
+<img width="940" alt="image" src="https://github.com/user-attachments/assets/1aae2a8c-4d84-4e83-b201-bc9d44915b68">
+
