@@ -20,9 +20,9 @@ sudo apt install ansible -y
 ```
 
 ### 2. Configure Your GCP Project
-Replace `airy-adapter-439306-c6` with your actual project ID:
+
 ```bash
-gcloud config set project airy-adapter-439306-c6
+gcloud config set project <project ID>
 ```
 
 ### 3. Verify Ansible Installation
@@ -60,7 +60,7 @@ Add the SSH public key to the instance metadata:
 ```bash
 gcloud compute instances add-metadata ansible-test \
     --zone=us-central1-a \
-    --metadata=ssh-keys="jibinbenny06:$(cat ~/.ssh/gcp_key.pub)"
+    --metadata=ssh-keys="<username>:$(cat ~/.ssh/gcp_key.pub)"
 ```
 
 Verify the metadata:
@@ -73,7 +73,7 @@ gcloud compute instances describe ansible-test \
 ### 7. Test SSH Connectivity
 Connect to the VM using SSH:
 ```bash
-ssh -i ~/.ssh/gcp_key jibinbenny06@<VM_EXTERNAL_IP>
+ssh -i ~/.ssh/gcp_key username@<VM_EXTERNAL_IP>
 ```
 Replace `<VM_EXTERNAL_IP>` with the external IP of your VM.
 
@@ -105,7 +105,7 @@ cat << 'EOF' > inventory.ini
 ansible-test ansible_host=<VM_EXTERNAL_IP>
 
 [all:vars]
-ansible_user=jibinbenny06
+ansible_user=username
 ansible_python_interpreter=/usr/bin/python3
 ansible_ssh_private_key_file=~/.ssh/gcp_key
 EOF
@@ -121,6 +121,27 @@ cat inventory.ini
 ---
 
 ## Running Your First Playbook
+
+Create playbook: nano first-playbook.yml
+verify: cat first-playbook.yml
+---
+- name: First Ansible Playbook
+  hosts: gcp_servers
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Start nginx service
+      service:
+        name: nginx
+        state: started
 
 1. Use the following command to run your playbook:
 ```bash
