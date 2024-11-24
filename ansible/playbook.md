@@ -93,7 +93,7 @@ Add the following content:
 ansible-test ansible_host=<VM_EXTERNAL_IP>
 
 [all:vars]
-ansible_user=jibinbenny06
+ansible_user=username
 ansible_python_interpreter=/usr/bin/python3
 ansible_ssh_private_key_file=~/.ssh/gcp_key
 ```
@@ -150,5 +150,6 @@ ansible-playbook -i inventory.ini first-playbook.yml
 
 ---
 
-<img width="940" alt="image" src="https://github.com/user-attachments/assets/1aae2a8c-4d84-4e83-b201-bc9d44915b68">
+<img width="940" alt="image" src="https://github.com/user-attachments/assets/69e31bcd-01d8-4b91-8f7e-699baa6bb68f">
+
 
