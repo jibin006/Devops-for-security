@@ -1,0 +1,57 @@
+#Web Server Deployment Playbook
+
+---
+- name: Web Server Deployment
+  hosts: targets
+  become: yes
+  vars:
+    web_server: nginx  # Choose between 'nginx' or 'apache'
+    domain_name: example.com
+    web_root: "/var/www/{{ domain_name }}"
+    enable_ssl: true
+    additional_packages:
+      - git
+      - curl
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install git
+      apt:
+        name: git
+        state: present
+
+    - name: Install curl
+      apt:
+        name: curl
+        state: present
+
+    - name: Install Web Server Packages
+      apt:
+        name:
+          - "{{ 'nginx' if web_server == 'nginx' else 'apache2' }}"
+          - "{{ item }}"
+        state: present
+        update_cache: yes
+      loop: "{{ additional_packages }}"
+
+    - name: Create web root directory
+      file:
+        path: "{{ web_root }}"
+        state: directory
+        mode: "0755"
+
+    - name: Install SSL package (if enabled)
+      apt:
+        name: openssl
+        state: present
+      when: enable_ssl
+
+    - name: Start web server
+      systemd:
+        name: "{{ 'nginx' if web_server == 'nginx' else 'apache2' }}"
+        state: started
+        enabled: yes
